@@ -1,0 +1,498 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUICKGOXPRESS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="personal.css"> 
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <header class="main-header">
+        <div class="header-left">
+            <div class="menu-btn" id="openDrawerBtn">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <span class="company-brand">QUICKGOXPRESS</span>
+        </div>
+        <div class="header-status status-logged-out" id="headerStatusBadge">
+            <i class="fa-solid fa-lock"></i> <span id="headerStatusText">Desconectado</span>
+        </div>
+    </header>
+
+    <nav class="side-drawer" id="sideDrawer">
+        <div class="drawer-header">
+            <div class="drawer-title">
+                <i class="fa-solid fa-truck-fast"></i> QUICKGO
+            </div>
+            <i class="fa-solid fa-xmark close-drawer" id="closeDrawerBtn"></i>
+        </div>
+        <div class="drawer-body">
+            <ul class="menu-list">
+                <li class="menu-item" id="homeMenuItem">
+                    <a href="#" class="menu-link active" data-target="view-home">
+                        <i class="fa-solid fa-house"></i> Iniciar Sesión / Inicio
+                    </a>
+                </li>
+                
+                <li class="menu-item" id="settingsMenuItem">
+                    <a href="#" class="menu-link" data-target="view-settings">
+                        <i class="fa-solid fa-gear"></i> Ajustes / Crear Cuenta
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link locked" data-target="view-profile" id="linkProfile">
+                        <i class="fa-solid fa-user"></i> Mi Perfil
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link locked" data-target="view-dashboard" id="linkPersonnel">
+                        <i class="fa-solid fa-user-plus"></i> Añadir Personal / Equipo
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link locked" data-target="view-create-invoice" id="linkCreateInvoice">
+                        <i class="fa-solid fa-calculator"></i> Crear Invoice
+                    </a>
+                </li>
+                <!-- Opción de Calculadora Flotante -->
+<li class="menu-item">
+    <a href="#" class="menu-link" id="linkFloatingCalc">
+        <i class="fa-solid fa-calculator"></i> Calculadora
+    </a>
+</li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link locked" data-target="view-invoices-list" id="linkInvoicesList">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> Invoices Guardados
+                    </a>
+                </li>
+                <!-- Opción Nueva: Mis Carros -->
+<li class="menu-item">
+    <a href="#" class="menu-link locked" data-target="view-my-cars" id="linkMyCars">
+        <i class="fa-solid fa-truck-front"></i> Mis Carros
+    </a>
+</li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link locked" data-target="view-important-files" id="linkFiles">
+                        <i class="fa-solid fa-folder-closed"></i> Archivos Importantes
+                    </a>
+                </li>
+                <li class="menu-item" id="logoutMenuItem" style="display: none; margin-top: 1rem;">
+                    <a href="#" class="menu-link" id="logoutBtn" style="color: var(--neon-red);">
+                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="drawer-footer">
+            QUICKGOXPRESS &copy; 2026 - Control de Cargas
+        </div>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="app-container">
+
+        <!-- VISTA: INICIO / LOGIN -->
+        <section id="view-home" class="view-section active">
+            <div class="cyber-card" style="max-width: 480px; margin: 0 auto;">
+                <h2 class="card-title"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Ingresa tu usuario y contraseña para administrar cargas y personal.</p>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de Usuario</label>
+                        <input type="text" id="loginUsername" class="form-control" placeholder="Ej. carlos123" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contraseña</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+                            <i class="fa-solid fa-eye toggle-password" id="toggleLoginPassword"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-cyber">
+                        <i class="fa-solid fa-bolt"></i> Entrar a la Plataforma
+                    </button>
+                </form>
+                <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-muted);">
+                    ¿Aún no tienes cuenta? <a href="#" id="goRegisterBtn" style="color: var(--neon-blue); text-decoration: none; font-weight: 700;">Regístrate en Ajustes</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA: CREAR CUENTA / AJUSTES -->
+        <section id="view-settings" class="view-section">
+            <div class="cyber-card" style="max-width: 480px; margin: 0 auto;">
+                <h2 class="card-title"><i class="fa-solid fa-gear"></i> Crear Cuenta / Ajustes</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Crea tu usuario maestro para gestionar tus invoice y personal.</p>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de Usuario</label>
+                        <input type="text" id="regUsername" class="form-control" placeholder="Ej. carlos123 (sin espacios)" pattern="[a-zA-Z0-9_]+" title="Solo letras, números o guion bajo" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombre Completo / Empresa</label>
+                        <input type="text" id="regFullName" class="form-control" placeholder="Ej. Carlos Pérez (Dueño)" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nueva Contraseña (Letras y Números)</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="regPassword" class="form-control" placeholder="Mínimo 6 caracteres (ej. Clave2026)" required minlength="6" autocomplete="new-password">
+                            <i class="fa-solid fa-eye toggle-password" id="toggleRegPassword"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-cyber">
+                        <i class="fa-solid fa-user-plus"></i> Crear Cuenta
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- VISTA: EQUIPO Y PERSONAL -->
+        <section id="view-dashboard" class="view-section">
+            <div class="welcome-banner">
+                <div class="animated-text-entrance">
+                    <div class="welcome-title">
+                        ¡Bienvenido, <span id="dashOwnerName" style="color: var(--neon-blue);">Usuario</span>!
+                    </div>
+                    <div class="welcome-sub">
+                        Gestión de personal activo y generación de códigos únicos de liquidación.
+                    </div>
+                </div>
+                <button class="fab-add-btn" id="openAddPersonModalBtn" type="button" title="Añadir Personal">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+            <div class="cyber-card">
+                <h3 style="font-family: 'Rajdhani'; font-size: 1.4rem; color: #fff; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span><i class="fa-solid fa-users" style="color: var(--neon-blue);"></i> Equipo de Trabajo</span>
+                    <span id="personnelCountBadge" style="font-size: 0.9rem; background: rgba(0,242,255,0.1); color: var(--neon-blue); padding: 4px 12px; border-radius: 12px; border: 1px solid var(--neon-blue);">0 Registrados</span>
+                </h3>
+
+                <div id="personnelContainer"></div>
+            </div>
+        </section>
+
+        <!-- VISTA: MI PERFIL -->
+        <section id="view-profile" class="view-section">
+            <div class="cyber-card" style="max-width: 500px; margin: 0 auto;">
+                <h2 class="card-title"><i class="fa-solid fa-id-card"></i> Configuración de Perfil</h2>
+                <div class="profile-wrapper">
+                    <div class="avatar-box">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" id="profileAvatarImg" class="avatar-img" alt="Foto Perfil">
+                        <label for="avatarFileInput" class="avatar-edit-label">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
+                        <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+                    </div>
+
+                    <form id="profileForm" style="width: 100%;">
+                        <div class="form-group" style="text-align: left;">
+                            <label class="form-label">Nombre del Propietario / Cuenta</label>
+                            <input type="text" id="editProfileName" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn-cyber">
+                            <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA: CREAR INVOICE -->
+        <section id="view-create-invoice" class="view-section">
+            <div class="cyber-card">
+                <h2 class="card-title"><i class="fa-solid fa-calculator"></i> Crear Invoice y Calcular Pago</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Ingresa el código único del trabajador, monto de la carga, incentivo y descuento.</p>
+
+                <form id="invoiceForm">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem;">
+                        <div class="form-group">
+                            <label class="form-label">Código Único (6 Dígitos)</label>
+                            <input type="text" id="invCodeInput" class="form-control" placeholder="Ej. 849201" maxlength="6" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Monto Bruto Carga ($)</label>
+                            <input type="number" step="0.01" id="invLoadAmount" class="form-control" placeholder="Ej. 2500.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Incentivo / Bonificación </label>
+                            <input type="number" step="0.01" id="invIncentive" class="form-control" placeholder="Ej. 100.00" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Descuento ($)</label>
+                            <input type="number" step="0.01" id="invDeduction" class="form-control" placeholder="Ej. 50.00" value="0">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-top: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Motivo del Incentivo</label>
+                            <input type="text" id="invIncentiveReason" class="form-control" placeholder="Ej. Buen tiempo de entrega / Desempeño">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Motivo del Descuento</label>
+                            <input type="text" id="invDeductionReason" class="form-control" placeholder="Ej. Daño parcial / Falta menor">
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-cyber" id="calculateInvoiceBtn" style="margin-top: 1rem;">
+                        <i class="fa-solid fa-play"></i> Calcular Pago Final
+                    </button>
+                </form>
+
+                <div id="invoiceResultContainer" style="display: none; margin-top: 1.5rem;">
+                    <div class="invoice-preview">
+                        <div class="invoice-header-row">
+                            <div>
+                                <h3 style="color: var(--neon-blue); font-size: 1.4rem;">QUICKGOXPRESS INVOICE</h3>
+                                <small style="color: var(--text-muted);">Propietario: <span id="invOutOwner" style="color: #fff;">-</span></small>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="code-badge" id="invOutCode">000000</span>
+                            </div>
+                        </div>
+
+                        <div class="invoice-data-line">
+                            <span>Trabajador Asociado:</span>
+                            <strong id="invOutWorkerName" style="color: #fff;">-</strong>
+                        </div>
+                        <div class="invoice-data-line">
+                            <span>Monto Carga Bruto:</span>
+                            <span class="invoice-highlight" id="invOutGross">$0.00</span>
+                        </div>
+                        <div class="invoice-data-line">
+                            <span>Porcentaje Trabajador (<span id="invOutWorkerPercent">0%</span>):</span>
+                            <strong id="invOutBasePay" style="color: #fff;">$0.00</strong>
+                        </div>
+                        
+                        <hr style="border-color: rgba(255,255,255,0.1); margin: 0.6rem 0;">
+
+                        <div class="invoice-data-line">
+                            <span>+ Incentivo / Bono:</span>
+                            <span class="invoice-highlight" id="invOutIncentive" style="color: #00ff66;">+$0.00</span>
+                        </div>
+                        <div class="invoice-data-line" style="font-size: 0.85rem; color: var(--text-muted);">
+                            <span>Motivo Bono:</span>
+                            <span id="invOutIncentiveReason">-</span>
+                        </div>
+
+                        <div class="invoice-data-line" style="margin-top: 0.4rem;">
+                            <span>- Descuento al Trabajador:</span>
+                            <span class="invoice-highlight-red" id="invOutDeduction">-$0.00</span>
+                        </div>
+                        <div class="invoice-data-line" style="font-size: 0.85rem; color: var(--text-muted);">
+                            <span>Motivo Descuento:</span>
+                            <span id="invOutDeductionReason">-</span>
+                        </div>
+
+                        <div class="invoice-total-box" style="margin-top: 1rem;">
+                            <div class="invoice-data-line" style="font-size: 1.25rem;">
+                                <span>Pago Final Trabajador:</span>
+                                <strong class="invoice-highlight" id="invOutWorkerPay" style="color: #00f2ff;">$0.00</strong>
+                            </div>
+                            <hr style="border-color: rgba(255,255,255,0.1); margin: 0.6rem 0;">
+                            <div class="invoice-data-line" style="font-size: 1.1rem;">
+                                <span>Ganancia Propietario (Limpia):</span>
+                                <strong style="color: #00ff66; text-shadow: 0 0 8px rgba(0,255,102,0.4);" id="invOutOwnerPay">$0.00</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-cyber" id="saveInvoiceToSystemBtn" style="margin-top: 1rem; background: linear-gradient(135deg, #00c853, #009624);">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Factura
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA: HISTORIAL DE INVOICES -->
+        <section id="view-invoices-list" class="view-section">
+            
+            <!-- BARRA DE BÚSQUEDA FUERA DE LA TARJETA DEL HISTORIAL -->
+            <div class="cyber-card" style="margin-bottom: 1rem; padding: 1rem 1.2rem;">
+                <div class="form-group" style="position: relative; margin-bottom: 0;">
+                    <input type="text" id="invoiceSearchCodeInput" class="form-control" placeholder="Buscar por código de persona (ej. 849201)..." style="padding-left: 45px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--neon-blue); font-size: 1.1rem; pointer-events: none;"></i>
+                </div>
+            </div>
+
+            <!-- TARJETA DEL HISTORIAL -->
+            <div class="cyber-card" style="max-width: 100%; overflow-x: auto;">
+                <h2 class="card-title"><i class="fa-solid fa-folder-tree"></i> Historial de Invoices Detallado</h2>
+                <div id="invoicesAccordionContainer"></div>
+            </div>
+        </section>
+
+        <!-- VISTA: ARCHIVOS IMPORTANTES -->
+        <section id="view-important-files" class="view-section">
+            <div class="cyber-card">
+                <h2 class="card-title"><i class="fa-solid fa-vault"></i> Archivos Importantes</h2>
+                <div class="form-group" style="background: rgba(0,0,0,0.4); padding: 1.5rem; border: 2px dashed var(--neon-blue); border-radius: 12px; text-align: center;">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.5rem; color: var(--neon-blue); margin-bottom: 0.8rem;"></i>
+                    <p style="color: #fff; font-weight: 600;">Subir Documentos</p>
+                    <input type="file" id="ownerImportantFileInput" class="form-control" style="margin-top: 1rem;">
+                    <button class="btn-cyber" id="uploadImportantFileBtn" style="margin-top: 1rem;">
+                        <i class="fa-solid fa-upload"></i> Guardar Documento
+                    </button>
+                </div>
+                <div id="ownerFilesContainer"></div>
+            </div>
+        </section><!-- VISTA: MIS CARROS / FLOTA -->
+<section id="view-my-cars" class="view-section">
+    <div class="welcome-banner">
+        <div class="animated-text-entrance">
+            <div class="welcome-title">
+                Mis Carros / Vehículos
+            </div>
+            <div class="welcome-sub">
+                Gestión de la flota de camiones y vehículos asignados.
+            </div>
+        </div>
+        <button class="fab-add-btn" id="openAddCarModalBtn" type="button" title="Añadir Vehículo">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+
+    <div class="cyber-card">
+        <h3 style="font-family: 'Rajdhani'; font-size: 1.4rem; color: #fff; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fa-solid fa-truck" style="color: var(--neon-blue);"></i> Unidades Registradas</span>
+            <span id="carsCountBadge" style="font-size: 0.9rem; background: rgba(0,242,255,0.1); color: var(--neon-blue); padding: 4px 12px; border-radius: 12px; border: 1px solid var(--neon-blue);">0 Carros</span>
+        </h3>
+
+        <div id="carsContainer"></div>
+    </div>
+</section>
+
+<!-- MODAL PARA REGISTRAR VEHÍCULO -->
+<div class="modal" id="addCarModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 style="font-family: 'Rajdhani'; font-size: 1.5rem; color: #fff;">
+                <i class="fa-solid fa-truck-front" style="color: var(--neon-blue);"></i> Registro de Vehículo
+            </h3>
+            <i class="fa-solid fa-xmark close-drawer" id="closeAddCarModalBtn"></i>
+        </div>
+        
+        <form id="addCarForm">
+
+            <div class="form-group">
+                <label class="form-label">Marca y Modelo</label>
+                <input type="text" id="newCarModel" class="form-control" placeholder="Ej. Freightliner Cascadia 2022" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Placa / VIN</label>
+                <input type="text" id="newCarPlate" class="form-control" placeholder="Ej. TX-98421" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Estado Actual</label>
+                <select id="newCarStatus" class="form-control">
+                    <option value="Disponible">Disponible</option>
+                    <option value="En Ruta">En Ruta</option>
+                    <option value="En Mantenimiento">En Mantenimiento</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn-cyber" style="margin-top: 1rem;">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Vehículo
+            </button>
+        </form>
+    </div>
+    <!-- MODAL PARA VER EL MAPA DE LA RUTA -->
+<div id="mapModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px; width: 90%; height: 80vh; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 id="mapModalTitle" style="color: #fff; margin: 0; font-family: 'Rajdhani', sans-serif;">
+                <i class="fa-solid fa-route" style="color: #00f2ff;"></i> Ruta del Vehículo
+            </h3>
+            <button id="closeMapModalBtn" class="btn-close-modal" style="background: transparent; border: none; color: #ff0055; font-size: 1.5rem; cursor: pointer;">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div style="flex: 1; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid rgba(0, 242, 255, 0.3);">
+            <iframe id="mapIframe" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen loading="lazy" src=""></iframe>
+        </div>
+    </div>
+</div>
+</div>
+
+    </main>
+
+    <!-- MODAL REGISTRO DE PERSONAL -->
+    <div class="modal" id="addPersonModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-family: 'Rajdhani'; font-size: 1.5rem; color: #fff;">
+                    <i class="fa-solid fa-user-plus" style="color: var(--neon-blue);"></i> Registro de Personal
+                </h3>
+                <i class="fa-solid fa-xmark close-drawer" id="closeAddPersonModalBtn"></i>
+            </div>
+            
+            <form id="addPersonForm">
+                <div class="form-group">
+                    <label class="form-label">Nombre del Trabajador</label>
+                    <input type="text" id="newPersonName" class="form-control" placeholder="Ej. Juan Pérez" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Porcentaje de Ganancia (%)</label>
+                    <input type="number" step="0.1" id="newPersonPercent" class="form-control" placeholder="Ej. 12.5" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rol / Cargo En La Empresa</label>
+                    <input type="text" id="newPersonRole" class="form-control" placeholder="Ej. Conductor / Despachador" required>
+                </div>
+                
+                <button type="submit" class="btn-cyber" style="margin-top: 1rem;">
+                    <i class="fa-solid fa-id-card"></i> Registrar y Generar Ficha
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- VENTANA FLOTANTE DE LA CALCULADORA -->
+<div class="floating-calc" id="floatingCalc">
+    <div class="calc-header" id="calcHeader">
+        <span><i class="fa-solid fa-calculator"></i> Calculadora</span>
+        <div class="calc-controls">
+            <button id="minimizeCalcBtn" title="Minimizar"><i class="fa-solid fa-minus"></i></button>
+            <button id="closeCalcBtn" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+    
+    <div class="calc-body" id="calcBody">
+        <input type="text" class="calc-display" id="calcDisplay" readonly value="0">
+        <div class="calc-buttons">
+            <button class="calc-btn op" data-action="clear">C</button>
+            <button class="calc-btn op" data-action="backspace"><i class="fa-solid fa-backspace"></i></button>
+            <button class="calc-btn op" data-val="/">÷</button>
+            <button class="calc-btn op" data-val="*">×</button>
+
+            <button class="calc-btn" data-val="7">7</button>
+            <button class="calc-btn" data-val="8">8</button>
+            <button class="calc-btn" data-val="9">9</button>
+            <button class="calc-btn op" data-val="-">-</button>
+
+            <button class="calc-btn" data-val="4">4</button>
+            <button class="calc-btn" data-val="5">5</button>
+            <button class="calc-btn" data-val="6">6</button>
+            <button class="calc-btn op" data-val="+">+</button>
+
+            <button class="calc-btn" data-val="1">1</button>
+            <button class="calc-btn" data-val="2">2</button>
+            <button class="calc-btn" data-val="3">3</button>
+            <button class="calc-btn op equal" data-action="calculate">=</button>
+
+            <button class="calc-btn zero" data-val="0">0</button>
+            <button class="calc-btn" data-val=".">.</button>
+        </div>
+    </div>
+</div>
+
+    <script type="module" src="personal.js"></script>
+</body>
+</html>
