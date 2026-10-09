@@ -20,7 +20,7 @@ import {
     deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Credenciales del proyecto
+// Credenciales del proyecto Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAquJSwYWNVzCNlHfCFb5p9dnpcXGOyt_s",
   authDomain: "quickgoxpress-app.firebaseapp.com",
@@ -34,7 +34,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// INYECCIÓN DE ESTILOS: Scrollbar, Tarjetas e Imagen de Carros
+// Estilos inyectados para scrollbar y tarjetas de vehículos
 const adaptiveScrollStyle = document.createElement('style');
 adaptiveScrollStyle.innerHTML = `
     .sync-scroll-card {
@@ -71,7 +71,6 @@ adaptiveScrollStyle.innerHTML = `
         }
     }
 
-    /* Grid para las tarjetas estilo Marketplace */
     .cars-grid-container {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
@@ -239,9 +238,6 @@ setPersistence(auth, browserLocalPersistence).catch((err) => {
     console.error("Error al configurar la persistencia:", err);
 });
 
-// ==========================================
-// ESTADO GLOBAL Y MEMORIA
-// ==========================================
 let state = {
     currentUser: null,
     userProfile: null,
@@ -261,9 +257,7 @@ function isValidPassword(password) {
     return /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
 }
 
-// ==========================================
-// CONTROL DEL MODAL DE MAPA
-// ==========================================
+// MODAL DE MAPA
 const mapModal = document.getElementById('mapModal');
 const closeMapModalBtn = document.getElementById('closeMapModalBtn');
 
@@ -296,9 +290,7 @@ function openRouteMap(pickup, delivery, vehicleModel) {
     if (mapModal) mapModal.classList.add('active');
 }
 
-// ==========================================
 // ANIMACIÓN DE FONDO (CANVAS)
-// ==========================================
 const canvas = document.getElementById('bgCanvas');
 if (canvas) {
     const ctx = canvas.getContext('2d');
@@ -347,9 +339,7 @@ if (canvas) {
     animateCanvas();
 }
 
-// ==========================================
-// ESCUCHADOR DE SESIÓN Y CARGA DESDE LA NUBE
-// ==========================================
+// ESCUCHADOR DE SESIÓN Y CARGA DE DATOS
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         state.currentUser = user;
@@ -398,9 +388,7 @@ async function loadUserData(uid) {
     }
 }
 
-// ==========================================
-// CONTROL DE NAVEGACIÓN
-// ==========================================
+// NAVEGACIÓN Y MENÚ
 const sideDrawer = document.getElementById('sideDrawer');
 const overlay = document.getElementById('overlay');
 
@@ -490,9 +478,7 @@ function updateAuthUI(isLoggedIn) {
     }
 }
 
-// ==========================================
-// AUTENTICACIÓN Y CUENTAS
-// ==========================================
+// INICIAR SESIÓN Y REGISTRO
 document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = document.getElementById('loginUsername').value.trim();
@@ -531,9 +517,7 @@ document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
     await signOut(auth);
 });
 
-// ==========================================
-// CONFIGURACIÓN DE PERFIL Y FOTO
-// ==========================================
+// MI PERFIL Y FOTO
 document.getElementById('avatarFileInput')?.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -583,9 +567,7 @@ document.getElementById('profileForm')?.addEventListener('submit', async (e) => 
     }
 });
 
-// ==========================================
 // GESTIÓN DE PERSONAL
-// ==========================================
 const addPersonModal = document.getElementById('addPersonModal');
 
 document.getElementById('openAddPersonModalBtn')?.addEventListener('click', () => {
@@ -745,9 +727,7 @@ function setupDeleteEvents() {
     });
 }
 
-// ==========================================
-// GESTIÓN DE MIS CARROS / VEHÍCULOS (CON MAPA INTERACTIVO)
-// ==========================================
+// MIS CARROS Y VEHÍCULOS (CON MILLAS INCLUIDAS)
 const addCarModal = document.getElementById('addCarModal');
 
 document.getElementById('openAddCarModalBtn')?.addEventListener('click', () => {
@@ -768,11 +748,13 @@ document.getElementById('addCarForm')?.addEventListener('submit', async (e) => {
 
     const model = document.getElementById('newCarModel').value.trim();
     const plate = document.getElementById('newCarPlate').value.trim();
+    const mileage = parseFloat(document.getElementById('newCarMileage').value) || 0;
     const status = document.getElementById('newCarStatus').value;
 
     const newCar = {
         model,
         plate,
+        mileage,
         status,
         pickupCity: '',
         deliveryCity: '',
@@ -821,10 +803,9 @@ function renderCars() {
     state.cars.forEach((car, index) => {
         const card = document.createElement('div');
         card.className = 'car-card-item';
-        card.style.cursor = 'pointer'; // Indicador de interactividad para abrir el mapa
+        card.style.cursor = 'pointer';
 
         card.innerHTML = `
-            <!-- ENCABEZADO DE TARJETA CON IMAGEN INTERACTIVA -->
             <div class="car-card-image-box">
                 <span class="car-card-badge">${car.status || 'Disponible'}</span>
                 
@@ -841,7 +822,6 @@ function renderCars() {
                 </label>
             </div>
 
-            <!-- CUERPO DE LA TARJETA EDITABLE -->
             <div class="car-card-body">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 class="car-card-title">${car.model || 'Vehículo sin Nombre'}</h3>
@@ -850,18 +830,17 @@ function renderCars() {
                     </span>
                 </div>
 
-                <!-- ETIQUETAS RÁPIDAS -->
+                <!-- ETIQUETAS RÁPIDAS (INCLUYENDO LAS MILLAS) -->
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                     <span class="car-tag-pill"><i class="fa-solid fa-id-card" style="color: #00f2ff;"></i> ${car.plate || 'Sin Placa'}</span>
+                    <span class="car-tag-pill"><i class="fa-solid fa-gauge-high" style="color: #00f2ff;"></i> Millas: ${parseFloat(car.mileage || 0).toLocaleString()} mi</span>
                     <span class="car-tag-pill"><i class="fa-solid fa-gas-pump" style="color: #ff0055;"></i> Diésel: $${parseFloat(car.dieselExpense || 0).toFixed(2)}</span>
                 </div>
 
                 <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 4px 0;">
 
-                <!-- FORMULARIO DE EDICIÓN EN LA TARJETA -->
                 <div style="display: flex; flex-direction: column; gap: 0.7rem;">
                     
-                    <!-- RUTA: RECOGIDA Y ENTREGA -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <div class="car-card-field-group">
                             <label class="car-card-label"><i class="fa-solid fa-location-dot" style="color: #00f2ff;"></i> Recogida</label>
@@ -873,7 +852,6 @@ function renderCars() {
                         </div>
                     </div>
 
-                    <!-- FECHAS: RECOGIDA Y ENTREGA -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <div class="car-card-field-group">
                             <label class="car-card-label"><i class="fa-solid fa-calendar-day"></i> F. Recogida</label>
@@ -885,11 +863,15 @@ function renderCars() {
                         </div>
                     </div>
 
-                    <!-- PLACA Y GASTO DE DIÉSEL -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <!-- PLACA, MILLAS Y DIÉSEL EN 3 COLUMNAS -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
                         <div class="car-card-field-group">
-                            <label class="car-card-label"><i class="fa-solid fa-barcode"></i> Placa / VIN</label>
+                            <label class="car-card-label"><i class="fa-solid fa-barcode"></i> Placa</label>
                             <input type="text" class="car-input-field car-auto-field" data-id="${car.id}" data-field="plate" value="${car.plate || ''}" placeholder="Placa">
+                        </div>
+                        <div class="car-card-field-group">
+                            <label class="car-card-label"><i class="fa-solid fa-gauge-high" style="color: #00f2ff;"></i> Millas</label>
+                            <input type="number" class="car-input-field car-auto-field" data-id="${car.id}" data-field="mileage" value="${car.mileage || ''}" placeholder="Millas">
                         </div>
                         <div class="car-card-field-group">
                             <label class="car-card-label"><i class="fa-solid fa-gas-pump" style="color: #ff0055;"></i> Diésel ($)</label>
@@ -897,25 +879,22 @@ function renderCars() {
                         </div>
                     </div>
 
-                    <!-- ESTADO -->
                     <div class="car-card-field-group">
                         <label class="car-card-label"><i class="fa-solid fa-signal"></i> Estado del Vehículo</label>
                         <select class="car-input-field car-auto-field" data-id="${car.id}" data-field="status">
                             <option value="Disponible" ${car.status === 'Disponible' ? 'selected' : ''}>Disponible</option>
                             <option value="En Ruta" ${car.status === 'En Ruta' ? 'selected' : ''}>En Ruta</option>
-                            <option value="Mantenimiento" ${car.status === 'Mantenimiento' ? 'selected' : ''}>Mantenimiento</option>
+                            <option value="En Mantenimiento" ${car.status === 'En Mantenimiento' ? 'selected' : ''}>En Mantenimiento</option>
                         </select>
                     </div>
 
                     <div id="car-save-status-${car.id}" style="font-size: 0.72rem; color: #00ff66; font-weight: bold; text-align: right; opacity: 0; transition: opacity 0.3s ease; height: 16px;">
                         <i class="fa-solid fa-cloud-arrow-up"></i> Cambios guardados
                     </div>
-
                 </div>
             </div>
         `;
 
-        // Evento para abrir el mapa al tocar/hacer clic en la tarjeta
         card.addEventListener('click', (e) => {
             if (e.target.closest('input') || e.target.closest('select') || e.target.closest('button') || e.target.closest('label')) {
                 return;
@@ -928,7 +907,6 @@ function renderCars() {
 
     container.appendChild(gridWrapper);
 
-    // Eventos de eliminación
     document.querySelectorAll('.btn-delete-car').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
@@ -1003,7 +981,7 @@ function setupCarAutoSaveEvents() {
             const key = field.getAttribute('data-field');
             let val = field.value;
 
-            if (key === 'dieselExpense') {
+            if (key === 'dieselExpense' || key === 'mileage') {
                 val = parseFloat(val) || 0;
             }
 
@@ -1044,9 +1022,7 @@ function showCarSaveStatus(id) {
     }
 }
 
-// ==========================================
 // CÁLCULO Y GUARDADO DE INVOICES
-// ==========================================
 document.getElementById('calculateInvoiceBtn')?.addEventListener('click', () => {
     const code = document.getElementById('invCodeInput').value.trim();
     const loadAmount = parseFloat(document.getElementById('invLoadAmount').value);
@@ -1132,6 +1108,7 @@ document.getElementById('invoiceSearchCodeInput')?.addEventListener('input', (e)
     renderInvoices();
 });
 
+// RENDERIZADO MEJORADO DE INVOICES CON ELIMINACIÓN INDIVIDUAL
 function renderInvoices() {
     const container = document.getElementById('invoicesAccordionContainer');
     if (!container) return;
@@ -1139,7 +1116,7 @@ function renderInvoices() {
     container.style.cssText = `
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1.2rem;
         width: 100%;
     `;
 
@@ -1169,7 +1146,7 @@ function renderInvoices() {
         return;
     }
 
-    sortedInvoices.forEach(inv => {
+    sortedInvoices.forEach((inv) => {
         const isNegative = inv.finalOwnerPay < 0;
         const ownerPayColor = isNegative ? '#ff0055' : '#00ff66';
         const ownerPayGlow = isNegative ? 'rgba(255,0,85,0.4)' : 'rgba(0,255,102,0.3)';
@@ -1180,75 +1157,84 @@ function renderInvoices() {
         card.style.cssText = `
             background: rgba(15, 23, 42, 0.95);
             border: 1px solid ${isNegative ? '#ff0055' : 'var(--neon-blue)'};
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 1.2rem;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             width: 100%;
-            white-space: nowrap;
+            position: relative;
         `;
 
         card.innerHTML = `
-            <div style="display: inline-flex; align-items: center; gap: 2rem; min-width: max-content;">
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
                 
-                <!-- 1. TRABAJADOR Y CÓDIGO -->
-                <div style="display: flex; flex-direction: column; min-width: 160px;">
-                    <strong style="color: var(--neon-blue); font-size: 1.1rem; font-family: 'Rajdhani', sans-serif;">
-                        <i class="fa-solid fa-user-check"></i> ${inv.workerName}
-                    </strong>
-                    <span class="code-badge" style="margin-top: 4px; width: fit-content;">COD: ${inv.code}</span>
-                    <span style="font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-top: 4px;">
-                        <i class="fa-regular fa-clock"></i> ${new Date(inv.createdAt).toLocaleDateString()}
-                    </span>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.8rem; flex-wrap: wrap; gap: 1rem;">
+                    
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span class="code-badge">COD: ${inv.code}</span>
+                        <div>
+                            <strong style="color: var(--neon-blue); font-size: 1.15rem; font-family: 'Rajdhani', sans-serif; display: block;">
+                                <i class="fa-solid fa-user-check"></i> ${inv.workerName}
+                            </strong>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">
+                                <i class="fa-regular fa-clock"></i> ${new Date(inv.createdAt).toLocaleString()}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 1.2rem;">
+                        <div style="text-align: right;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block;">Mi Ganancia</span>
+                            <span style="color: ${ownerPayColor}; font-weight: 900; font-family: 'Orbitron', monospace; font-size: 1.25rem; text-shadow: 0 0 10px ${ownerPayGlow};">
+                                ${ownerPaySign}$${parseFloat(inv.finalOwnerPay || 0).toFixed(2)}
+                            </span>
+                        </div>
+
+                        <button class="btn-delete-invoice" data-id="${inv.id || ''}" data-code="${inv.code}" style="background: rgba(255, 0, 85, 0.15); border: 1px solid #ff0055; color: #ff0055; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Eliminar Factura">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- 2. MI GANANCIA (PROPIETARIO) -->
-                <div style="text-align: center; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 1.5rem; min-width: 140px;">
-                    <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; display: block;">Mi Ganancia</span>
-                    <span style="color: ${ownerPayColor}; font-weight: 900; font-family: 'Orbitron', monospace; font-size: 1.2rem; text-shadow: 0 0 10px ${ownerPayGlow};">
-                        ${ownerPaySign}$${inv.finalOwnerPay.toFixed(2)}
-                    </span>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 10px;">
+                    <div style="display: flex; gap: 1.2rem; flex-wrap: wrap;">
+                        <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Carga Bruta:</span> <strong style="color: #fff;">$${parseFloat(inv.loadAmount || 0).toFixed(2)}</strong></div>
+                        <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Base (${inv.workerPercent}%):</span> <strong style="color: #fff;">$${parseFloat(inv.baseWorkerPay || 0).toFixed(2)}</strong></div>
+                        <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Bono / Incentivo:</span> <strong style="color: #00ff66;">+$${parseFloat(inv.incentive || 0).toFixed(2)}</strong></div>
+                        <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Descuento:</span> <strong style="color: #ff0055;">-$${parseFloat(inv.deduction || 0).toFixed(2)}</strong></div>
+                        <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Pago Chofer:</span> <strong style="color: #00f2ff;">$${parseFloat(inv.finalWorkerPay || 0).toFixed(2)}</strong></div>
+                    </div>
                 </div>
 
-                <!-- 3. DESGLOSE DE VALORES FINANCIEROS -->
-                <div style="display: flex; gap: 1.2rem; background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.85rem; border-left: 1px solid rgba(255,255,255,0.1);">
-                    <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Carga:</span> <strong style="color: #fff;">$${inv.loadAmount.toFixed(2)}</strong></div>
-                    <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Base (${inv.workerPercent}%):</span> <strong style="color: #fff;">$${inv.baseWorkerPay.toFixed(2)}</strong></div>
-                    <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Bono:</span> <strong style="color: #00ff66;">+$${inv.incentive.toFixed(2)}</strong></div>
-                    <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Descuento:</span> <strong style="color: #ff0055;">-$${inv.deduction.toFixed(2)}</strong></div>
-                    <div><span style="color: var(--text-muted); display:block; font-size:0.7rem;">Pago Chofer:</span> <strong style="color: #00f2ff;">$${inv.finalWorkerPay.toFixed(2)}</strong></div>
-                </div>
-
-                <!-- 4. CAMPOS DE DETALLES Y FORMULARIO CON AUTOGUARDADO -->
-                <div style="display: flex; gap: 1rem; align-items: center; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 1.5rem;">
-                    <div>
+                <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; background: rgba(6, 8, 15, 0.5); padding: 0.8rem; border-radius: 10px; border: 1px solid rgba(0, 242, 255, 0.1);">
+                    <div style="flex: 1; min-width: 130px;">
                         <label class="form-label" style="font-size: 0.7rem; margin-bottom: 2px;"><i class="fa-solid fa-location-dot" style="color: var(--neon-blue);"></i> Ciu. Recogida</label>
-                        <input type="text" class="form-control inv-auto-field inv-pickup-city-input" data-id="${inv.id}" data-field="pickupCity" value="${inv.pickupCity || ''}" placeholder="Ej. Miami, FL" style="width: 120px; padding: 4px 8px; font-size: 0.8rem;">
+                        <input type="text" class="form-control inv-auto-field" data-id="${inv.id}" data-field="pickupCity" value="${inv.pickupCity || ''}" placeholder="Ej. Miami, FL" style="padding: 6px 10px; font-size: 0.85rem;">
                     </div>
-                    <div>
+                    <div style="flex: 1; min-width: 130px;">
                         <label class="form-label" style="font-size: 0.7rem; margin-bottom: 2px;"><i class="fa-solid fa-flag-checkered" style="color: #00ff66;"></i> Ciu. Entrega</label>
-                        <input type="text" class="form-control inv-auto-field inv-delivery-city-input" data-id="${inv.id}" data-field="deliveryCity" value="${inv.deliveryCity || ''}" placeholder="Ej. Atlanta, GA" style="width: 120px; padding: 4px 8px; font-size: 0.8rem;">
+                        <input type="text" class="form-control inv-auto-field" data-id="${inv.id}" data-field="deliveryCity" value="${inv.deliveryCity || ''}" placeholder="Ej. Atlanta, GA" style="padding: 6px 10px; font-size: 0.85rem;">
                     </div>
-                    <div>
+                    <div style="flex: 1; min-width: 130px;">
                         <label class="form-label" style="font-size: 0.7rem; margin-bottom: 2px;"><i class="fa-solid fa-calendar-day"></i> Recogida</label>
-                        <input type="date" class="form-control inv-auto-field inv-pickup-input" data-id="${inv.id}" data-field="pickupDate" value="${inv.pickupDate || ''}" style="width: 130px; padding: 4px 8px; font-size: 0.8rem;">
+                        <input type="date" class="form-control inv-auto-field" data-id="${inv.id}" data-field="pickupDate" value="${inv.pickupDate || ''}" style="padding: 6px 10px; font-size: 0.85rem;">
                     </div>
-                    <div>
+                    <div style="flex: 1; min-width: 130px;">
                         <label class="form-label" style="font-size: 0.7rem; margin-bottom: 2px;"><i class="fa-solid fa-calendar-check"></i> Entrega</label>
-                        <input type="date" class="form-control inv-auto-field inv-delivery-input" data-id="${inv.id}" data-field="deliveryDate" value="${inv.deliveryDate || ''}" style="width: 130px; padding: 4px 8px; font-size: 0.8rem;">
+                        <input type="date" class="form-control inv-auto-field" data-id="${inv.id}" data-field="deliveryDate" value="${inv.deliveryDate || ''}" style="padding: 6px 10px; font-size: 0.85rem;">
                     </div>
-                    <div>
+                    <div style="flex: 1; min-width: 110px;">
                         <label class="form-label" style="font-size: 0.7rem; margin-bottom: 2px;"><i class="fa-solid fa-gas-pump"></i> Diésel ($)</label>
-                        <input type="number" step="0.01" class="form-control inv-auto-field inv-fuel-input" data-id="${inv.id}" data-field="fuelExpense" value="${inv.fuelExpense || ''}" placeholder="Ej. 350.00" style="width: 100px; padding: 4px 8px; font-size: 0.8rem;">
+                        <input type="number" step="0.01" class="form-control inv-auto-field" data-id="${inv.id}" data-field="fuelExpense" value="${inv.fuelExpense || ''}" placeholder="0.00" style="padding: 6px 10px; font-size: 0.85rem;">
                     </div>
-                    <div>
+                    <div style="flex: 1; min-width: 110px;">
                         <label class="form-label" style="font-size: 0.7rem; margin-bottom: 2px;"><i class="fa-solid fa-truck-ramp-box"></i> Tipo</label>
-                        <select class="form-control inv-auto-field inv-type-select" data-id="${inv.id}" data-field="loadType" style="width: 110px; padding: 4px 8px; font-size: 0.8rem;">
+                        <select class="form-control inv-auto-field" data-id="${inv.id}" data-field="loadType" style="padding: 6px 10px; font-size: 0.85rem;">
                             <option value="Dedicada" ${inv.loadType === 'Dedicada' ? 'selected' : ''}>Dedicada</option>
                             <option value="Parcial" ${inv.loadType === 'Parcial' ? 'selected' : ''}>Parcial</option>
                         </select>
                     </div>
                     
-                    <div id="save-status-${inv.id}" style="font-size: 0.75rem; color: #00ff66; font-weight: bold; min-width: 90px; opacity: 0; transition: opacity 0.3s ease; margin-left: 10px;">
+                    <div id="save-status-${inv.id}" style="font-size: 0.75rem; color: #00ff66; font-weight: bold; min-width: 80px; opacity: 0; transition: opacity 0.3s ease; text-align: center;">
                         <i class="fa-solid fa-cloud-arrow-up"></i> Guardado
                     </div>
                 </div>
@@ -1259,37 +1245,29 @@ function renderInvoices() {
     });
 
     setupInvoiceDetailEvents();
-    setupSyncedScroll();
+    setupDeleteInvoiceEvents();
 }
 
-function setupSyncedScroll() {
-    const cards = document.querySelectorAll('.sync-scroll-card');
-    if (cards.length === 0) return;
+function setupDeleteInvoiceEvents() {
+    document.querySelectorAll('.btn-delete-invoice').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const docId = btn.getAttribute('data-id');
+            const code = btn.getAttribute('data-code');
 
-    let activeCard = null;
+            if (!confirm(`¿Estás seguro de eliminar la factura asociada al código ${code}?`)) return;
 
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', () => { activeCard = card; });
-        card.addEventListener('touchstart', () => { activeCard = card; });
-
-        card.addEventListener('scroll', () => {
-            if (activeCard !== card) return;
-
-            const currentScrollLeft = card.scrollLeft;
-
-            cards.forEach(otherCard => {
-                if (otherCard !== card) {
-                    otherCard.scrollLeft = currentScrollLeft;
+            try {
+                if (docId && state.currentUser) {
+                    await deleteDoc(doc(db, 'users', state.currentUser.uid, 'invoices', docId));
                 }
-            });
-        });
-
-        card.addEventListener('wheel', (evt) => {
-            if (evt.deltaY !== 0) {
-                evt.preventDefault();
-                card.scrollLeft += evt.deltaY;
+                state.invoices = state.invoices.filter(i => i.id !== docId);
+                renderInvoices();
+            } catch (err) {
+                console.error("Error al eliminar invoice:", err);
+                alert("Error al eliminar la factura: " + err.message);
             }
-        }, { passive: false });
+        });
     });
 }
 
@@ -1303,9 +1281,6 @@ function showAutoSaveStatus(id) {
     }
 }
 
-// ==========================================
-// AUTOGUARDADO DE CAMPOS DE INVOICE EN FIRESTORE
-// ==========================================
 function setupInvoiceDetailEvents() {
     document.querySelectorAll('.inv-auto-field').forEach(field => {
         const handler = (e) => {
@@ -1353,9 +1328,7 @@ function setupTogglePassword(btnId, inputId) {
 setupTogglePassword('toggleLoginPassword', 'loginPassword');
 setupTogglePassword('toggleRegPassword', 'regPassword');
 
-// ==========================================
-// LÓGICA Y FUNCIONALIDAD DE CALCULADORA FLOTANTE
-// ==========================================
+// CALCULADORA FLOTANTE
 const floatingCalc = document.getElementById('floatingCalc');
 const calcHeader = document.getElementById('calcHeader');
 const calcBody = document.getElementById('calcBody');
@@ -1364,7 +1337,6 @@ const linkFloatingCalc = document.getElementById('linkFloatingCalc');
 const closeCalcBtn = document.getElementById('closeCalcBtn');
 const minimizeCalcBtn = document.getElementById('minimizeCalcBtn');
 
-// 1. Mostrar Calculadora desde el Menú
 linkFloatingCalc?.addEventListener('click', (e) => {
     e.preventDefault();
     floatingCalc.classList.add('active');
@@ -1373,7 +1345,6 @@ linkFloatingCalc?.addEventListener('click', (e) => {
     }
 });
 
-// 2. Cerrar y Minimizar
 closeCalcBtn?.addEventListener('click', () => {
     floatingCalc.classList.remove('active');
 });
@@ -1382,7 +1353,6 @@ minimizeCalcBtn?.addEventListener('click', () => {
     calcBody.classList.toggle('minimized');
 });
 
-// 3. Ventana Arrastrable (Drag and Drop)
 let isDragging = false;
 let offsetX = 0, offsetY = 0;
 
@@ -1403,7 +1373,6 @@ document.addEventListener('mouseup', () => {
     isDragging = false;
 });
 
-// Soporte táctil para pantallas móviles
 calcHeader?.addEventListener('touchstart', (e) => {
     isDragging = true;
     const touch = e.touches[0];
@@ -1423,7 +1392,6 @@ document.addEventListener('touchend', () => {
     isDragging = false;
 });
 
-// 4. Lógica de Operaciones de la Calculadora
 document.querySelectorAll('.calc-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const val = btn.getAttribute('data-val');
