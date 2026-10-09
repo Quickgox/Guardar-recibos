@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -6,14 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="personal.css"> 
-    <!-- Configuración PWA para instalación -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#00f2ff">
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-      }
-    </script>
 </head>
 <body>
 
@@ -66,23 +59,21 @@
                         <i class="fa-solid fa-calculator"></i> Crear Invoice
                     </a>
                 </li>
-                <!-- Opción de Calculadora Flotante -->
-<li class="menu-item">
-    <a href="#" class="menu-link" id="linkFloatingCalc">
-        <i class="fa-solid fa-calculator"></i> Calculadora
-    </a>
-</li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" id="linkFloatingCalc">
+                        <i class="fa-solid fa-calculator"></i> Calculadora
+                    </a>
+                </li>
                 <li class="menu-item">
                     <a href="#" class="menu-link locked" data-target="view-invoices-list" id="linkInvoicesList">
                         <i class="fa-solid fa-file-invoice-dollar"></i> Invoices Guardados
                     </a>
                 </li>
-                <!-- Opción Nueva: Mis Carros -->
-<li class="menu-item">
-    <a href="#" class="menu-link locked" data-target="view-my-cars" id="linkMyCars">
-        <i class="fa-solid fa-truck-front"></i> Mis Carros
-    </a>
-</li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link locked" data-target="view-my-cars" id="linkMyCars">
+                        <i class="fa-solid fa-truck-front"></i> Mis Carros
+                    </a>
+                </li>
                 <li class="menu-item">
                     <a href="#" class="menu-link locked" data-target="view-important-files" id="linkFiles">
                         <i class="fa-solid fa-folder-closed"></i> Archivos Importantes
@@ -323,7 +314,6 @@
         <!-- VISTA: HISTORIAL DE INVOICES -->
         <section id="view-invoices-list" class="view-section">
             
-            <!-- BARRA DE BÚSQUEDA FUERA DE LA TARJETA DEL HISTORIAL -->
             <div class="cyber-card" style="margin-bottom: 1rem; padding: 1rem 1.2rem;">
                 <div class="form-group" style="position: relative; margin-bottom: 0;">
                     <input type="text" id="invoiceSearchCodeInput" class="form-control" placeholder="Buscar por código de persona (ej. 849201)..." style="padding-left: 45px;">
@@ -331,7 +321,6 @@
                 </div>
             </div>
 
-            <!-- TARJETA DEL HISTORIAL -->
             <div class="cyber-card" style="max-width: 100%; overflow-x: auto;">
                 <h2 class="card-title"><i class="fa-solid fa-folder-tree"></i> Historial de Invoices Detallado</h2>
                 <div id="invoicesAccordionContainer"></div>
@@ -352,83 +341,89 @@
                 </div>
                 <div id="ownerFilesContainer"></div>
             </div>
-        </section><!-- VISTA: MIS CARROS / FLOTA -->
-<section id="view-my-cars" class="view-section">
-    <div class="welcome-banner">
-        <div class="animated-text-entrance">
-            <div class="welcome-title">
-                Mis Carros / Vehículos
+        </section>
+
+        <!-- VISTA: MIS CARROS / FLOTA -->
+        <section id="view-my-cars" class="view-section">
+            <div class="welcome-banner">
+                <div class="animated-text-entrance">
+                    <div class="welcome-title">
+                        Mis Carros / Vehículos
+                    </div>
+                    <div class="welcome-sub">
+                        Gestión de la flota de camiones y vehículos asignados.
+                    </div>
+                </div>
+                <button class="fab-add-btn" id="openAddCarModalBtn" type="button" title="Añadir Vehículo">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
             </div>
-            <div class="welcome-sub">
-                Gestión de la flota de camiones y vehículos asignados.
+
+            <div class="cyber-card">
+                <h3 style="font-family: 'Rajdhani'; font-size: 1.4rem; color: #fff; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between;">
+                    <span><i class="fa-solid fa-truck" style="color: var(--neon-blue);"></i> Unidades Registradas</span>
+                    <span id="carsCountBadge" style="font-size: 0.9rem; background: rgba(0,242,255,0.1); color: var(--neon-blue); padding: 4px 12px; border-radius: 12px; border: 1px solid var(--neon-blue);">0 Carros</span>
+                </h3>
+
+                <div id="carsContainer"></div>
+            </div>
+        </section>
+
+        <!-- MODAL REGISTRAR VEHÍCULO (CON CAMPO MILLAS) -->
+        <div class="modal" id="addCarModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="font-family: 'Rajdhani'; font-size: 1.5rem; color: #fff;">
+                        <i class="fa-solid fa-truck-front" style="color: var(--neon-blue);"></i> Registro de Vehículo
+                    </h3>
+                    <i class="fa-solid fa-xmark close-drawer" id="closeAddCarModalBtn"></i>
+                </div>
+                
+                <form id="addCarForm">
+                    <div class="form-group">
+                        <label class="form-label">Marca y Modelo</label>
+                        <input type="text" id="newCarModel" class="form-control" placeholder="Ej. Freightliner Cascadia 2022" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Placa / VIN</label>
+                        <input type="text" id="newCarPlate" class="form-control" placeholder="Ej. TX-98421" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Millas Actuales</label>
+                        <input type="number" id="newCarMileage" class="form-control" placeholder="Ej. 125000" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado Actual</label>
+                        <select id="newCarStatus" class="form-control">
+                            <option value="Disponible">Disponible</option>
+                            <option value="En Ruta">En Ruta</option>
+                            <option value="En Mantenimiento">En Mantenimiento</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn-cyber" style="margin-top: 1rem;">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Vehículo
+                    </button>
+                </form>
             </div>
         </div>
-        <button class="fab-add-btn" id="openAddCarModalBtn" type="button" title="Añadir Vehículo">
-            <i class="fa-solid fa-plus"></i>
-        </button>
-    </div>
 
-    <div class="cyber-card">
-        <h3 style="font-family: 'Rajdhani'; font-size: 1.4rem; color: #fff; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between;">
-            <span><i class="fa-solid fa-truck" style="color: var(--neon-blue);"></i> Unidades Registradas</span>
-            <span id="carsCountBadge" style="font-size: 0.9rem; background: rgba(0,242,255,0.1); color: var(--neon-blue); padding: 4px 12px; border-radius: 12px; border: 1px solid var(--neon-blue);">0 Carros</span>
-        </h3>
-
-        <div id="carsContainer"></div>
-    </div>
-</section>
-
-<!-- MODAL PARA REGISTRAR VEHÍCULO -->
-<div class="modal" id="addCarModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 style="font-family: 'Rajdhani'; font-size: 1.5rem; color: #fff;">
-                <i class="fa-solid fa-truck-front" style="color: var(--neon-blue);"></i> Registro de Vehículo
-            </h3>
-            <i class="fa-solid fa-xmark close-drawer" id="closeAddCarModalBtn"></i>
-        </div>
-        
-        <form id="addCarForm">
-
-            <div class="form-group">
-                <label class="form-label">Marca y Modelo</label>
-                <input type="text" id="newCarModel" class="form-control" placeholder="Ej. Freightliner Cascadia 2022" required>
+        <!-- MODAL VER MAPA DE RUTA -->
+        <div id="mapModal" class="modal">
+            <div class="modal-content" style="max-width: 800px; width: 90%; height: 80vh; display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 id="mapModalTitle" style="color: #fff; margin: 0; font-family: 'Rajdhani', sans-serif;">
+                        <i class="fa-solid fa-route" style="color: #00f2ff;"></i> Ruta del Vehículo
+                    </h3>
+                    <button id="closeMapModalBtn" style="background: transparent; border: none; color: #ff0055; font-size: 1.5rem; cursor: pointer;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div style="flex: 1; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid rgba(0, 242, 255, 0.3);">
+                    <iframe id="mapIframe" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen loading="lazy" src=""></iframe>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Placa / VIN</label>
-                <input type="text" id="newCarPlate" class="form-control" placeholder="Ej. TX-98421" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Estado Actual</label>
-                <select id="newCarStatus" class="form-control">
-                    <option value="Disponible">Disponible</option>
-                    <option value="En Ruta">En Ruta</option>
-                    <option value="En Mantenimiento">En Mantenimiento</option>
-                </select>
-            </div>
-            
-            <button type="submit" class="btn-cyber" style="margin-top: 1rem;">
-                <i class="fa-solid fa-floppy-disk"></i> Guardar Vehículo
-            </button>
-        </form>
-    </div>
-    <!-- MODAL PARA VER EL MAPA DE LA RUTA -->
-<div id="mapModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 800px; width: 90%; height: 80vh; display: flex; flex-direction: column;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h3 id="mapModalTitle" style="color: #fff; margin: 0; font-family: 'Rajdhani', sans-serif;">
-                <i class="fa-solid fa-route" style="color: #00f2ff;"></i> Ruta del Vehículo
-            </h3>
-            <button id="closeMapModalBtn" class="btn-close-modal" style="background: transparent; border: none; color: #ff0055; font-size: 1.5rem; cursor: pointer;">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
         </div>
-        <div style="flex: 1; width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid rgba(0, 242, 255, 0.3);">
-            <iframe id="mapIframe" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen loading="lazy" src=""></iframe>
-        </div>
-    </div>
-</div>
-</div>
 
     </main>
 
@@ -462,44 +457,45 @@
             </form>
         </div>
     </div>
+
     <!-- VENTANA FLOTANTE DE LA CALCULADORA -->
-<div class="floating-calc" id="floatingCalc">
-    <div class="calc-header" id="calcHeader">
-        <span><i class="fa-solid fa-calculator"></i> Calculadora</span>
-        <div class="calc-controls">
-            <button id="minimizeCalcBtn" title="Minimizar"><i class="fa-solid fa-minus"></i></button>
-            <button id="closeCalcBtn" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+    <div class="floating-calc" id="floatingCalc">
+        <div class="calc-header" id="calcHeader">
+            <span><i class="fa-solid fa-calculator"></i> Calculadora</span>
+            <div class="calc-controls">
+                <button id="minimizeCalcBtn" title="Minimizar"><i class="fa-solid fa-minus"></i></button>
+                <button id="closeCalcBtn" title="Cerrar"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+        
+        <div class="calc-body" id="calcBody">
+            <input type="text" class="calc-display" id="calcDisplay" readonly value="0">
+            <div class="calc-buttons">
+                <button class="calc-btn op" data-action="clear">C</button>
+                <button class="calc-btn op" data-action="backspace"><i class="fa-solid fa-backspace"></i></button>
+                <button class="calc-btn op" data-val="/">÷</button>
+                <button class="calc-btn op" data-val="*">×</button>
+
+                <button class="calc-btn" data-val="7">7</button>
+                <button class="calc-btn" data-val="8">8</button>
+                <button class="calc-btn" data-val="9">9</button>
+                <button class="calc-btn op" data-val="-">-</button>
+
+                <button class="calc-btn" data-val="4">4</button>
+                <button class="calc-btn" data-val="5">5</button>
+                <button class="calc-btn" data-val="6">6</button>
+                <button class="calc-btn op" data-val="+">+</button>
+
+                <button class="calc-btn" data-val="1">1</button>
+                <button class="calc-btn" data-val="2">2</button>
+                <button class="calc-btn" data-val="3">3</button>
+                <button class="calc-btn op equal" data-action="calculate">=</button>
+
+                <button class="calc-btn zero" data-val="0">0</button>
+                <button class="calc-btn" data-val=".">.</button>
+            </div>
         </div>
     </div>
-    
-    <div class="calc-body" id="calcBody">
-        <input type="text" class="calc-display" id="calcDisplay" readonly value="0">
-        <div class="calc-buttons">
-            <button class="calc-btn op" data-action="clear">C</button>
-            <button class="calc-btn op" data-action="backspace"><i class="fa-solid fa-backspace"></i></button>
-            <button class="calc-btn op" data-val="/">÷</button>
-            <button class="calc-btn op" data-val="*">×</button>
-
-            <button class="calc-btn" data-val="7">7</button>
-            <button class="calc-btn" data-val="8">8</button>
-            <button class="calc-btn" data-val="9">9</button>
-            <button class="calc-btn op" data-val="-">-</button>
-
-            <button class="calc-btn" data-val="4">4</button>
-            <button class="calc-btn" data-val="5">5</button>
-            <button class="calc-btn" data-val="6">6</button>
-            <button class="calc-btn op" data-val="+">+</button>
-
-            <button class="calc-btn" data-val="1">1</button>
-            <button class="calc-btn" data-val="2">2</button>
-            <button class="calc-btn" data-val="3">3</button>
-            <button class="calc-btn op equal" data-action="calculate">=</button>
-
-            <button class="calc-btn zero" data-val="0">0</button>
-            <button class="calc-btn" data-val=".">.</button>
-        </div>
-    </div>
-</div>
 
     <script type="module" src="personal.js"></script>
 </body>
